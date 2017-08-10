@@ -18,8 +18,8 @@
 <organizations default="org_hapyak">
 	<organization identifier="org_hapyak">
 		<title>HapYak SCORM 2004 Lesson</title>
-		<item identifier="hapyak_SCORM2004_0004" identifierref="hapyak_SCORM2004_0004_resource">
-			<title>HapYak Scorm Lesson 0004</title>
+		<item identifier="hapyak_SCORM2004_0005" identifierref="hapyak_SCORM2004_0005_resource">
+			<title>HapYak Scorm Lesson 0005</title>
 		</item>
 		<imsss:sequencing>
 			<imsss:controlMode choiceExit="true" flow="true"/>
@@ -28,7 +28,7 @@
 	</organization>
 </organizations>
 <resources>
-	<resource identifier="hapyak_SCORM2004_0004_resource" adlcp:scormType="sco" href="scorm2004.html" type="webcontent">
+	<resource identifier="hapyak_SCORM2004_0005_resource" adlcp:scormType="sco" href="scorm2004.html" type="webcontent">
 		<file href="scorm2004.html"/>
 		<file href="scorm_api_wrapper.js"/>
 	</resource>
