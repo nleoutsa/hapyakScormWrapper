@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN'
+        'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+
+    <title>HapYak Scorm Wrapper</title>
+
+    <link rel='stylesheet' href='reset.css'>
+
+    <style type='text/css'>
+        body {
+            background: #1892bf;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        iframe {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+
+    <script type='text/javascript' src='scorm_api_wrapper.js'></script>
+
+    <script type='text/javascript'>
+        var hy = {};
+
+        hy.scorm = pipwerks.SCORM;
+        hy.connected = false;
+        hy.cmi = {}; // object intended to mimic the SCORM CMI model
+
+        function handleError(msg) {
+            alert(msg);
+            // disconnect from the LMS, we don't need to do anything else.
+            hy.scorm.quit();
+            // fatal error occured. Close window after alert
+            window.close();
+        }
+
+        function initCourse() {
+            //scorm.init returns a boolean
+            hy.connected = hy.scorm.init();
+
+            //If the scorm.init function succeeded...
+            if (hy.connected) {
+                // get params off of CMI
+                hy.cmi.completion_status = hy.scorm.get('cmi.completion_status');
+                hy.cmi.success_status = hy.scorm.get('cmi.success_status');
+                hy.cmi.learner_name = hy.scorm.get('cmi.learner_name');
+                hy.cmi.learner_id = hy.scorm.get('cmi.learner_id');
+                hy.cmi.score_raw = hy.scorm.get('cmi.score.raw');
+                hy.cmi.score_max = hy.scorm.get('cmi.score.max');
+                hy.cmi.score_min = hy.scorm.get('cmi.score.min');
+                hy.cmi.score_scaled = hy.scorm.get('cmi.score.scaled');
+                hy.cmi.launch_data = hy.scorm.get('cmi.launch_data');
+
+                console.log(hy);
+            } else { //If the course couldn't connect to the LMS for some reason:
+                handleError('Error: Course could not connect with the LMS');
+            }
+        }
+
+        function setComplete(grade, callback) {
+            var success;
+
+            // If the lmsConnection is active...
+            if (hy.connected) {
+                // try setting the course status to 'completed'
+                hy.scorm.set('cmi.score.min', 0);
+                hy.scorm.set('cmi.score.max', 100);
+                hy.scorm.set('cmi.score.raw', 100 * +grade);
+
+                success = hy.scorm.set('cmi.completion_status', 'completed');
+
+                hy.scorm.save();
+
+                callback(success);
+            } else { // If the course isn't connected to the LMS for some reason...
+                handleError('Error: Course is not connected to the LMS');
+            }
+        }
+
+        window.onload = function () {
+            initCourse();
+        };
+
+        function messageHandler(e) {
+            // simple check that message came from a hapyak site
+            if (e.origin.split('.')[1] !== 'hapyak') {
+                return;
+            }
+
+            if (e.data.msg === 'hapyak_frame_scorm_get_cmi') {
+                console.log('***************************');
+                console.log(hy.cmi);
+                console.log('***************************');
+                e.source.postMessage({
+                    msg: 'hapyak_scorm_api_wrapper_sending_cmi',
+                    cmi: hy.cmi
+                }, event.origin);
+            }
+
+            if (e.data.msg === 'hapyak_frame_scorm_lesson_complete') {
+                console.log('^^^^^^^^^^^^^^^^^');
+                console.log(e.data);
+                console.log('^^^^^^^^^^^^^^^^^');
+                setComplete(e.data.grade, function (success) {
+                    e.source.postMessage({
+                        msg: 'hapyak_scorm_api_wrapper_sending_grade_set_confirmation',
+                        success: success,
+                        grade: hy.scorm.get('cmi.score.scaled')
+                    }, event.origin);
+
+                    if (success) { // If the course was successfully set to 'completed'...
+                        // disconnect from the LMS, we don't need to do anything else.
+                        hy.scorm.quit();
+                    } else { // If the course couldn't be set to completed for some reason...
+                        handleError('Error: Course could not be set to complete!');
+                    }
+                });
+            }
+        }
+
+        window.addEventListener('message', messageHandler);
+    </script>
+</head>
+
+<body>
+    <iframe id='hapyak_scorm_iframe' src='//dev.hapyak.com/portal/experience/viewer/7c06c442137342debbc9be7d439a0739' frameborder='0'></iframe>
+</body>
+
+</html>

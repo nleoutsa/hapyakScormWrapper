@@ -1,0 +1,36 @@
+<?xml version="1.0" standalone="no"?>
+<manifest   identifier="completionExample" version="1.0"
+			xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
+			xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_v1p3"
+			xmlns:adlseq="http://www.adlnet.org/xsd/adlseq_v1p3"
+			xmlns:adlnav="http://www.adlnet.org/xsd/adlnav_v1p3"
+			xmlns:imsss="http://www.imsglobal.org/xsd/imsss"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:schemaLocation="http://www.imsglobal.org/xsd/imscp_v1p1 imscp_v1p1.xsd
+			http://www.imsglobal.org/xsd/imsss imsss_v1p0.xsd
+			http://www.adlnet.org/xsd/adlcp_v1p3 adlcp_v1p3.xsd
+			http://www.adlnet.org/xsd/adlseq_v1p3 adlseq_v1p3.xsd
+			http://www.adlnet.org/xsd/adlnav_v1p3 adlnav_v1p3.xsd" >
+<metadata>
+	<schema>ADL SCORM</schema>
+	<schemaversion>2004 3rd Edition</schemaversion>
+</metadata>
+<organizations default="org_hapyak">
+	<organization identifier="org_hapyak">
+		<title>HapYak SCORM 2004 Lesson</title>
+		<item identifier="hapyak_SCORM2004_0004" identifierref="hapyak_SCORM2004_0004_resource">
+			<title>HapYak Scorm Lesson 0004</title>
+		</item>
+		<imsss:sequencing>
+			<imsss:controlMode choiceExit="true" flow="true"/>
+			<imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+		</imsss:sequencing>
+	</organization>
+</organizations>
+<resources>
+	<resource identifier="hapyak_SCORM2004_0004_resource" adlcp:scormType="sco" href="scorm2004.html" type="webcontent">
+		<file href="scorm2004.html"/>
+		<file href="scorm_api_wrapper.js"/>
+	</resource>
+</resources>
+</manifest>
